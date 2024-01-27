@@ -6,12 +6,11 @@
 #include "LittleCharacter.h"
 #include "Projectile.h"
 #include "Components/SphereComponent.h"
-#include "Engine/SkeletalMeshSocket.h"
 
 // Sets default values
 AWeapon::AWeapon()
 {
-	WeaponMesh = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("WeaponMesh"));
+	WeaponMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("WeaponMesh"));
 	WeaponMesh->SetupAttachment(RootComponent);
 	SetRootComponent(WeaponMesh);
 	
@@ -53,21 +52,17 @@ void AWeapon::ShowPickupWidget(bool bShowWidget)
 void AWeapon::Fire(const FVector& HitTarget)
 {
 	APawn* InstigatorPawn = Cast<APawn>(GetOwner());
-	if(const USkeletalMeshSocket* MuzzleFlashSocket = GetWeaponMesh()->GetSocketByName(FName("MuzzleFlash")))
+	const FTransform SocketTransform = GetWeaponMesh()->GetSocketTransform("MuzzleFlash");
+	const FVector ToTarget = HitTarget - SocketTransform.GetLocation();
+	const FRotator TargetRotation = ToTarget.Rotation();
+	if(ProjectileClass && InstigatorPawn)
 	{
-		const FTransform SocketTransform = MuzzleFlashSocket->GetSocketTransform(GetWeaponMesh());
-		const FVector ToTarget = HitTarget - SocketTransform.GetLocation();
-		const FRotator TargetRotation = ToTarget.Rotation();
-		if(ProjectileClass && InstigatorPawn)
+		FActorSpawnParameters SpawnParams;
+		SpawnParams.Owner = GetOwner();
+		SpawnParams.Instigator = InstigatorPawn;
+		if(UWorld* World = GetWorld())
 		{
-			FActorSpawnParameters SpawnParams;
-			SpawnParams.Owner = GetOwner();
-			SpawnParams.Instigator = InstigatorPawn;
-			if(UWorld* World = GetWorld())
-			{
-				World->SpawnActor<AProjectile>(ProjectileClass, SocketTransform.GetLocation(), TargetRotation,
-					SpawnParams);
-			}
+			World->SpawnActor<AProjectile>(ProjectileClass, SocketTransform.GetLocation(), TargetRotation, SpawnParams);
 		}
 	}
 }

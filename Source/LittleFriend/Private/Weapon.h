@@ -27,7 +27,7 @@ public:
 
 	virtual void Fire(const FVector& HitTarget);
 
-	FORCEINLINE USkeletalMeshComponent* GetWeaponMesh() const { return WeaponMesh; }
+	FORCEINLINE UStaticMeshComponent* GetWeaponMesh() const { return WeaponMesh; }
 
 protected:
 	// Called when the game starts or when spawned
@@ -42,13 +42,13 @@ protected:
 		int32 OtherBodyIndex);
 
 	UPROPERTY(VisibleAnywhere, Category="Weapon Properties")
-	USkeletalMeshComponent* WeaponMesh;
+	TObjectPtr<UStaticMeshComponent> WeaponMesh;
 
 	UPROPERTY(VisibleAnywhere, Category="Weapon Properties")
-	USphereComponent* AreaSphere;
+	TObjectPtr<USphereComponent> AreaSphere;
 
 	UPROPERTY(VisibleAnywhere, Category="Weapon Properties")
-	UWidgetComponent* PickupWidget;
+	TObjectPtr<UWidgetComponent> PickupWidget;
 
 	UPROPERTY(EditAnywhere)
 	TSubclassOf<AProjectile> ProjectileClass;
