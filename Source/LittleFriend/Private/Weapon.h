@@ -10,6 +10,7 @@
 
 #define CUSTOM_DEPTH_BLUE 251
 
+class AProjectile;
 class USphereComponent;
 
 UCLASS()
@@ -23,6 +24,10 @@ public:
 
 	void EnableCustomDepth(bool bEnable);
 	void ShowPickupWidget(bool bShowWidget);
+
+	virtual void Fire(const FVector& HitTarget);
+
+	FORCEINLINE USkeletalMeshComponent* GetWeaponMesh() const { return WeaponMesh; }
 
 protected:
 	// Called when the game starts or when spawned
@@ -44,6 +49,9 @@ protected:
 
 	UPROPERTY(VisibleAnywhere, Category="Weapon Properties")
 	UWidgetComponent* PickupWidget;
+
+	UPROPERTY(EditAnywhere)
+	TSubclassOf<AProjectile> ProjectileClass;
 
 public:	
 	// Called every frame
