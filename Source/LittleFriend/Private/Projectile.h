@@ -7,6 +7,7 @@
 
 #include "Projectile.generated.h"
 
+class UProjectileMovementComponent;
 class USoundCue;
 class UNiagaraComponent;
 class UNiagaraSystem;
@@ -55,6 +56,9 @@ protected:
 
 	UPROPERTY()
 	TObjectPtr<UNiagaraComponent> TrailSystemComponent;
+
+	UPROPERTY(VisibleAnywhere)
+	TObjectPtr<UProjectileMovementComponent> ProjectileMovementComponent;
 
 	UPROPERTY(EditAnywhere)
 	float DestroyTime = 3.f;

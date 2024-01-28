@@ -3,9 +3,11 @@
 
 #include "Projectile.h"
 
+#include "LittleCharacter.h"
 #include "Components/BoxComponent.h"
 #include "Kismet/GameplayStatics.h"
 #include "NiagaraFunctionLibrary.h"
+#include "GameFramework/ProjectileMovementComponent.h"
 #include "Sound/SoundCue.h"
 
 // Sets default values
@@ -20,6 +22,9 @@ AProjectile::AProjectile()
 	CollisionBox->SetCollisionResponseToAllChannels(ECollisionResponse::ECR_Ignore);
 	CollisionBox->SetCollisionResponseToChannel(ECollisionChannel::ECC_Visibility, ECollisionResponse::ECR_Block);
 	CollisionBox->SetCollisionResponseToChannel(ECollisionChannel::ECC_WorldStatic, ECollisionResponse::ECR_Block);
+
+	ProjectileMovementComponent = CreateDefaultSubobject<UProjectileMovementComponent>(TEXT("ProjectileMovementComponent"));
+	ProjectileMovementComponent->bRotationFollowsVelocity = true;
 }
 
 void AProjectile::BeginPlay()
@@ -55,6 +60,16 @@ void AProjectile::Tick(float DeltaSeconds)
 
 void AProjectile::OnHit(UPrimitiveComponent* HitComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& Hit)
 {
+	const ALittleCharacter* OwnerCharacter = Cast<ALittleCharacter>(GetOwner());
+	if(OwnerCharacter)
+	{
+		AController* OwnerController = OwnerCharacter->Controller;
+		if(OwnerController)
+		{
+			UGameplayStatics::ApplyDamage(OtherActor, Damage, OwnerController, this, UDamageType::StaticClass());
+		}
+	}
+	
 	Destroy();
 }
 

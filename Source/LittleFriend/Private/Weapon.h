@@ -25,6 +25,7 @@ public:
 	void EnableCustomDepth(bool bEnable);
 	void ShowPickupWidget(bool bShowWidget);
 
+	UFUNCTION(BlueprintCallable)
 	virtual void Fire(const FVector& HitTarget);
 
 	FORCEINLINE UStaticMeshComponent* GetWeaponMesh() const { return WeaponMesh; }
